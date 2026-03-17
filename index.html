@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>class-spaceOS</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('background.avif'); /* Set the background image */
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: #c5c8c6; /* Text color */
+        }
+
+        .desktop {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .app-icon {
+            display: inline-block;
+            margin: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .app-icon img {
+            width: 80px;
+            height: 80px;
+        }
+
+        .app-icon span {
+            display: block;
+            margin-top: 10px;
+            color: white;
+        }
+
+        .window {
+            position: absolute;
+            width: 600px;
+            height: 400px;
+            border: 2px solid #000;
+            background-color: #282a2e; /* Dark window background */
+            z-index: 10;
+            display: none;
+            color: #c5c8c6;
+            overflow: hidden;
+        }
+
+        .window-header {
+            background-color: #373b41;
+            padding: 10px;
+            cursor: move;
+            text-align: center;
+            font-weight: bold;
+            color: #c5c8c6;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .window-header .close-btn, .window-header .fullscreen-btn {
+            cursor: pointer;
+            color: red;
+            font-weight: bold;
+        }
+
+        .window-content {
+            padding: 10px;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            background-color: #1d1f21;
+        }
+
+        .terminal-input, .notepad-content, .notification-input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background-color: #1d1f21;
+            color: white;
+            font-family: monospace;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .notification-input {
+            padding: 10px;
+            box-sizing: border-box;
+            border: 2px solid #373b41;
+        }
+
+        .notification-send {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #373b41;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+
+        .notification-display {
+            margin-top: 10px;
+            color: yellow;
+            font-family: monospace;
+        }
+
+        .proxy-list {
+            color: white;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+
+        .proxy-list a {
+            color: #66d9ef;
+            text-decoration: none;
+            display: block;
+        }
+
+        .bottom-center {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: red;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        .readme-content {
+            white-space: pre-wrap; /* Preserve formatting */
+        }
+
+        .fullscreen {
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            transform: none;
+            z-index: 100;
+        }
+
+        /* Title at the bottom of Readme Window */
+        .readme-bottom-title {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: red;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            font-size: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="desktop">
+        <div class="app-icon" onclick="openApp('chrome-window')">
+            <img src="Chrome.png" alt="Proxy Browser">
+            <span>Browser</span>
+        </div>
+        <div class="app-icon" onclick="openApp('notepad-window')">
+            <img src="notes.png" alt="Notepad">
+            <span>Notepad</span>
+        </div>
+        <div class="app-icon" onclick="openApp('terminal-window')">
+            <img src="terminal.png" alt="Terminal">
+            <span>Terminal</span>
+        </div>
+        <div class="app-icon" onclick="openApp('notification-window')">
+            <img src="chat.png" alt="Notification App">
+            <span>Notification</span>
+        </div>
+        <div class="app-icon" onclick="openApp('desmos-window')">
+            <img src="calc.png" alt="Desmos Graphing Calculator">
+            <span>Graphing Calculator</span>
+        </div>
+        <div class="app-icon" onclick="openApp('vault-window')">
+            <img src="vault.jpeg" alt="V4U1T">
+            <span>V4U1T</span>
+        </div>
+        <div class="app-icon" onclick="openApp('readme-window')">
+            <img src="readme.jpeg" alt="Readme">
+            <span>Readme</span>
+        </div>
+        <div class="app-icon" onclick="openApp('ai-developer-window')">
+            <img src="colab.jpeg" alt="AI Developer">
+            <span>AI Developer</span>
+        </div>
+    </div>
+
+    <!-- Proxy Browser Window -->
+    <div id="chrome-window" class="window">
+        <div class="window-header">
+            <span>Browser</span>
+            <span class="close-btn" onclick="closeApp('chrome-window')">X</span>
+            <span class="fullscreen-btn" onclick="toggleFullscreen('chrome-window')">fullscreen</span>
+        </div>
+        <div class="window-content">
+            <iframe id="proxy-browser" src="https://coursera.cf/"></iframe>
+        </div>
+    </div>
+
+    <!-- Notepad Window -->
+    <div id="notepad-window" class="window">
+        <div class="window-header">
+            <span>Notepad</span>
+            <span class="close-btn" onclick="closeApp('notepad-window')">X</span>
+            <span class="fullscreen-btn" onclick="toggleFullscreen('notepad-window')">fullscreen</span>
+        </div>
+        <div class="window-content notepad-content" contenteditable="true">
+            <!-- Editable Notepad content -->
+        </div>
+    </div>
+
+    <!-- Terminal Window -->
+    <div id="terminal-window" class="window">
+        <div class="window-header">
+            <span>Terminal</span>
+            <span class="close-btn" onclick="closeApp('terminal-window')">X</span>
+            <span class="fullscreen-btn" onclick="toggleFullscreen('terminal-window')">fullscreen</span>
+        </div>
+        <div class="window-content">
+            <div id="terminal-output"></div>
+            <input type="text" id="terminal-input" class="terminal-input" placeholder="Type JavaScript commands...(warning do not enter unknown cmds)">
+        </div>
+    </div>
+
+    <!-- Notification App Window -->
+    <div id="notification-window" class="window">
+        <div class="window-header">
+            <span>Notification App</span>
+            <span class="close-btn" onclick="closeApp('notification-window')">X</span>
+            <span class="fullscreen-btn" onclick="toggleFullscreen('notification-window')">fullscreen</span>
+        </div>
+        <div class="window-content">
+
+            <input type="text" id="notification-input" class="notification-input" placeholder="Type your notification...">
+            <div class="notification-send" onclick="sendNotification()">Send Notification</div>
+            <div id="notification-display" class="notification-display"></div>
+        </div>
+    </div>
+
+    <!-- Desmos Graphing Calculator Window -->
+    <div id="desmos-window" class="window">
+        <div class="window-header">
+            <span>Graphing Calculator</span>
+            <span class="close-btn" onclick="closeApp('desmos-window')">X</span>
+            <span class="fullscreen-btn" onclick="toggleFullscreen('desmos-window')">fullscreen</span>
+        </div>
+        <div class="window-content">
+            <iframe src="https://www.desmos.com/calculator"></iframe>
+        </div>
+    </div>
+
+    <!-- V4U1T Window -->
+    <div id="vault-window" class="window">
+        <div class="window-header">
+            <span>V4U1T</span>
+            <span class="close-btn" onclick="closeApp('vault-window')">X</span>
+            <span class="fullscreen-btn" onclick="toggleFullscreen('vault-window')">fullscreen</span>
+        </div>
+                <div class="window-content proxy-list">
+            <h2>Web Proxies</h2>
+            <a href="https://coursera.cf/" target="_blank">Proxy 1</a>
+            <a href="https://anotherproxy.example" target="_blank">Proxy 2</a>
+            <a href="https://yetanotherproxy.example" target="_blank">Proxy 3</a>
+            <!-- Add more proxies as needed -->
+        </div>
+    </div>
+
+    <!-- Readme Window -->
+    <div id="readme-window" class="window" style="display: block; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <div class="window-header">
+            <span>Readme</span>
+            <span class="close-btn" onclick="closeApp('readme-window')">X</span>
+            <span class="fullscreen-btn" onclick="toggleFullscreen('readme-window')">fullscreen</span>
+        </div>
+        <div class="window-content readme-content">
+Welcome to the <i><span style="color: green;">Mastering the Internet program!</span></i>
+
+This code is your gateway to a hidden world—crafted to help us preserve unblocked game links while flying under the radar. Share this with your friends (but not the teachers!), and together, we can keep our digital freedom alive.
+
+To truly make a difference, I challenge you to learn the basics of HTML and the power of the < iframe > element. Once you've mastered these, don’t just use the links—embed them using iframes. This will keep our efforts covert and strong.
+
+<i><span style="color: green;">A message to the script kiddies:</span></i>
+
+Hello, aspiring Skids. Remember, true mastery comes with knowledge and responsibility. Don’t pretend to be a hacker if you’re not ready—it could backfire. And please, refrain from using the JavaScript terminal unless you know exactly what you're doing. Let’s all contribute wisely to our community.
+
+
+(lol I told ai to make this more inpiring)
+
+        <div class="readme-bottom-title">mastering the internet</div>
+    </div>
+
+    <!-- AI Developer Window -->
+    <div id="ai-developer-window" class="window">
+        <div class="window-header">
+            <span>AI Developer</span>
+            <span class="close-btn" onclick="closeApp('ai-developer-window')">X</span>
+            <span class="fullscreen-btn" onclick="toggleFullscreen('ai-developer-window')">fullscreen</span>
+        </div>
+        <div class="window-content">
+            <iframe src="https://colab.research.google.com/" title="AI Developer"></iframe>
+        </div>
+    </div>
+
+    <div class="bottom-center">mastering the internet</div>
+
+    <script>
+        function openApp(appId) {
+            const appWindow = document.getElementById(appId);
+            appWindow.style.display = 'block';
+            appWindow.style.zIndex = 10;  // Ensure the window is on top
+        }
+
+        function closeApp(appId) {
+            const appWindow = document.getElementById(appId);
+            appWindow.style.display = 'none';
+        }
+
+        function toggleFullscreen(appId) {
+            const appWindow = document.getElementById(appId);
+            appWindow.classList.toggle('fullscreen');
+        }
+
+        // Draggable windows
+        document.querySelectorAll('.window').forEach(window => {
+            let isMouseDown = false;
+            let offset = [0, 0];
+
+            window.querySelector('.window-header').addEventListener('mousedown', function(e) {
+                isMouseDown = true;
+                offset = [
+                    window.offsetLeft - e.clientX,
+                    window.offsetTop - e.clientY
+                ];
+            }, true);
+
+            document.addEventListener('mouseup', function() {
+                isMouseDown = false;
+            }, true);
+
+            document.addEventListener('mousemove', function(e) {
+                e.preventDefault();
+                if (isMouseDown) {
+                    window.style.left = (e.clientX + offset[0]) + 'px';
+                    window.style.top = (e.clientY + offset[1]) + 'px';
+                }
+            }, true);
+        });
+
+        // Terminal functionality
+        const terminalInput = document.getElementById('terminal-input');
+        terminalInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const command = terminalInput.value;
+                try {
+                    const result = eval(command);
+                    document.getElementById('terminal-output').innerText += `> ${command}\n${result}\n`;
+                } catch (error) {
+                    document.getElementById('terminal-output').innerText += `> ${command}\nError: ${error.message}\n`;
+                }
+                terminalInput.value = '';
+            }
+        });
+
+        // Notification functionality
+        function sendNotification() {
+            const notificationMessage = document.getElementById('notification-input').value;
+            if (notificationMessage) {
+                document.getElementById('notification-display').innerText = notificationMessage;
+                setTimeout(() => {
+                    alert(notificationMessage);  // Show a visible notification
+                }, 100);  // Small delay to allow display update before alert
+            }
+        }
+    </script>
+</body>
+</html>
